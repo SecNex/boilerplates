@@ -1,0 +1,41 @@
+version: "3.8"
+
+services:
+  portainer:
+    image: portainer/portainer-ce:latest
+    container_name: core.portainer.mgmt
+    restart: always
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - portainer_data:/data
+    networks:
+      - default
+      - proxy
+
+  proxy:
+    image: jc21/nginx-proxy-manager:latest
+    container_name: core.proxy
+    restart: unless-stopped
+    ports:
+      - 80:80
+      - 81:81
+      - 443:443
+    volumes:
+      - /opt/docker/nginx-proxy-manager/data:/data
+      - /opt/docker/nginx-proxy-manager/letsencrypt:/etc/letsencrypt
+    networks:
+      - proxy
+
+networks:
+  default:
+    external: false
+    name: portainer
+  proxy:
+    external: false
+    name: proxy
+
+volumes:
+  portainer_data:
+    driver: local
+    name: portainer.data
+  

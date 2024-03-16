@@ -1,0 +1,9 @@
+# All possible options and their defaults: https://github.com/zitadel/zitadel/blob/main/cmd/setup/steps.yaml
+FirstInstance:
+  Org:
+    InstanceName: ZITADEL
+    DefaultLanguage: en
+    Human:
+      # use the loginname chris@zitadel.auth.serverify.de
+      Username: 'root'
+      Password: 'RootPassword1!'

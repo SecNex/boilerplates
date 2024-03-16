@@ -1,0 +1,47 @@
+version: "3.8"
+
+networks:
+  zitadel:
+    external: false
+    name: zitadel
+  proxy:
+    external: true
+    name: proxy
+
+services:
+  zitadel:
+    container_name: "core.zitadel"
+    restart: "always"
+    networks:
+      - "zitadel"
+      - "proxy"
+    image: "ghcr.io/zitadel/zitadel:stable"
+    command: 'start-from-init --config /opt/zitadel/config/zitadel-config.yaml --config /opt/zitadel/config/zitadel-secrets.yaml --steps /opt/zitadel/config/zitadel-init-steps.yaml --masterkey "${ZITADEL_MASTERKEY}" --tlsMode disabled'
+    ports:
+      - "8080:8080"
+    # expose:
+    #   - "8080"
+    volumes:
+      - "./config:/opt/zitadel/config"
+
+  db:
+    container_name: "core.zitadel.psql"
+    image: postgres:16-alpine
+    restart: always
+    environment:
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=v2xMF1mx3p9MLyVt50U9P7a8mUKjKW7knEeyO6Oh18Jewmvz
+    networks:
+      - "zitadel"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready", "-d", "db_prod"]
+      interval: 10s
+      timeout: 60s
+      retries: 5
+      start_period: 10s 
+    volumes:
+      - 'data:/var/lib/postgresql/data:rw'
+
+volumes:
+  data:
+    name: core.zitadel.data
