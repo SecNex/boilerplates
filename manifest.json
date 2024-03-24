@@ -1,0 +1,113 @@
+{
+    "version": "2",
+    "templates": [
+        {
+            "type": 2,
+            "title": "Authentik",
+            "description": "Authentik is a simple and secure identity provider.",
+            "note": "Deploy Authentik to manage your users and groups.",
+            "categories": [
+                "Identity"
+            ],
+            "platform": "linux",
+            "logo": "https://cf.appdrag.com/dashboard-openvm-clo-b2d42c/uploads/goauthentik-LRFF.png",
+            "repository": {
+                "url": "https://github.com/SecNex/boilerplates",
+                "stackfile": "authentik/docker-compose.yml"
+            },
+            "env": [
+                {
+                    "name": "PG_PASS",
+                    "label": "Postgres Password",
+                    "description": "The password for the Postgres database"
+                },
+                {
+                    "name": "AUTHENTIK_SECRET_KEY",
+                    "label": "Authentik Secret Key",
+                    "description": "The secret key for Authentik"
+                },
+                {
+                    "name": "AUTHENTIK_ERROR_REPORTING__ENABLED",
+                    "label": "Authentik Error Reporting",
+                    "select": [
+                        {
+                            "text": "Yes",
+                            "value": "true",
+                            "default": true
+                        },
+                        {
+                            "text": "No",
+                            "value": "false"
+                        }
+                    ]
+                },
+                {
+                    "name": "AUTHENTIK_EMAIL__HOST",
+                    "label": "Email Host",
+                    "description": "The SMTP host for sending emails"
+                },
+                {
+                    "name": "AUTHENTIK_EMAIL__PORT",
+                    "label": "Email Port",
+                    "description": "The SMTP port for sending emails"
+                },
+                {
+                    "name": "AUTHENTIK_EMAIL__USERNAME",
+                    "label": "Email Username",
+                    "description": "The SMTP username for sending emails"
+                },
+                {
+                    "name": "AUTHENTIK_EMAIL__PASSWORD",
+                    "label": "Email Password",
+                    "description": "The SMTP password for sending emails"
+                },
+                {
+                    "name": "AUTHENTIK_EMAIL__FROM",
+                    "label": "Email From",
+                    "description": "The email address to send emails from"
+                },
+                {
+                    "name": "AUTHENTIK_EMAIL__USE_TLS",
+                    "label": "Use TLS",
+                    "select": [
+                        {
+                            "text": "Yes",
+                            "value": "true",
+                            "default": true
+                        },
+                        {
+                            "text": "No",
+                            "value": "false"
+                        }
+                    ]
+                },
+                {
+                    "name": "AUTHENTIK_EMAIL__USE_SSL",
+                    "label": "Use SSL",
+                    "select": [
+                        {
+                            "text": "Yes",
+                            "value": "true",
+                            "default": true
+                        },
+                        {
+                            "text": "No",
+                            "value": "false"
+                        }
+                    ]
+                },
+                {
+                    "name": "AUTHENTIK_EMAIL__TIMEOUT",
+                    "label": "Email Timeout",
+                    "description": "The timeout for sending emails"
+                },
+                {
+                    "name": "AUTHENTIK_TAG",
+                    "label": "Authentik Tag",
+                    "description": "The tag for Authentik",
+                    "default": "2024.2"
+                }
+            ]
+        }
+    ]
+}
