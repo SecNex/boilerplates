@@ -183,3 +183,4 @@ cython_debug/
 # Go workspace file
 go.work
 
+stack.env

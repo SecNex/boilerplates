@@ -6,6 +6,8 @@ services:
     restart: unless-stopped
     volumes:
       - redisdata:/data
+    networks:
+      - default
 
   database:
     container_name: app.paperless.database
@@ -19,6 +21,8 @@ services:
       POSTGRES_DB: ${POSTGRES_DB:-paperless_PRD}
       POSTGRES_USER: ${POSTGRES_USER:-paperless}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Password not set}
+    networks:
+      - default
 
   webserver:
     container_name: app.paperless
@@ -54,6 +58,9 @@ services:
       PAPERLESS_TIKA_ENDPOINT: http://tika:9998
       PAPERLESS_CORS_ALLOWED_HOSTS: ${PAPERLESS_CORS_ALLOWED_HOSTS:-*}
       PAPERLESS_TRUSTED_PROXIES: ${PAPERLESS_TRUSTED_PROXIES}
+    networks:
+      - default
+      - proxy
 
   gotenberg:
     container_name: app.paperless.gotenberg
@@ -66,11 +73,23 @@ services:
       - "gotenberg"
       - "--chromium-disable-javascript=true"
       - "--chromium-allow-list=file:///tmp/.*"
+    networks:
+      - default
 
   tika:
     container_name: app.paperless.tika
     image: ghcr.io/paperless-ngx/tika:latest
     restart: unless-stopped
+    networks:
+      - default
+
+networks:
+  default:
+    external: false
+    name: paperless
+  proxy:
+    external: true
+    name: proxy
 
 volumes:
   pgdata:
