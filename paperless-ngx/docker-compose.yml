@@ -13,6 +13,8 @@ services:
     restart: unless-stopped
     volumes:
       - pgdata:/var/lib/postgresql/data
+    env_file:
+      - stack.env
     environment:
       POSTGRES_DB: ${POSTGRES_DB:-paperless_PRD}
       POSTGRES_USER: ${POSTGRES_USER:-paperless}
@@ -24,6 +26,8 @@ services:
     restart: unless-stopped
     depends_on:
       - broker
+    env_file:
+      - stack.env
     expose:
       - 8000
     volumes:
@@ -48,6 +52,8 @@ services:
       PAPERLESS_TIKA_ENABLED: 1
       PAPERLESS_TIKA_GOTENBERG_ENDPOINT: http://gotenberg:3000
       PAPERLESS_TIKA_ENDPOINT: http://tika:9998
+      PAPERLESS_CORS_ALLOWED_HOSTS: ${PAPERLESS_CORS_ALLOWED_HOSTS:-*}
+      PAPERLESS_TRUSTED_PROXIES: ${PAPERLESS_TRUSTED_PROXIES}
 
   gotenberg:
     container_name: app.paperless.gotenberg
