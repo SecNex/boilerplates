@@ -1,0 +1,24 @@
+trigger: none
+
+pool:
+  vmImage: 'ubuntu-latest'
+  # name: 'ReleaseAgent' # Use a self-hosted agent
+
+schedules:
+- cron: '*/15 */4 * * *'
+  displayName: "Every 4 hours on the 15th minute of the hour (UTC) - Backup files"
+  branches:
+    include:
+     - main
+  always: true
+
+stages:
+- stage: backup_files
+  jobs:
+  - template: templates/copy-file.yaml
+    parameters:
+      files:
+        - source: 'src'
+          destination: 'backup'
+        - source: 'src2'
+          destination: 'backup2'

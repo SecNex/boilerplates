@@ -1,0 +1,14 @@
+# Template to copy a file from one location to another
+parameters:
+  files: []
+
+jobs:
+  - ${{ each file in parameters.files }}:
+      - job: copy-file
+        displayName: 'Copy file ${{ file.source }} to ${{ file.destination }}'
+        steps:
+          - task: CopyFiles@2
+            inputs:
+              SourceFolder: ${{ file.source }}
+              Contents: '**'
+              TargetFolder: ${{ file.destination }}
