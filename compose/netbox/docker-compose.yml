@@ -205,7 +205,7 @@ services:
       - -c
       - redis-server --requirepass $$REDIS_PASSWORD
     environment:
-      REDIS_PASSWORD: ${REDIS_PASSWORD:-netbox}
+      REDIS_PASSWORD: ${REDIS_CACHE_PASSWORD:-netbox}
     volumes:
       - netbox-redis-cache-data:/data
     networks:
