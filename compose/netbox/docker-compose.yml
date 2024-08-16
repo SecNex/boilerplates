@@ -8,6 +8,18 @@ networks:
     external: true
 
 services:
+  db:
+    image: postgres:latest
+    container_name: app.netbox.db
+    environment:
+      POSTGRES_DB: ${DB_NAME:-netbox}
+      POSTGRES_USER: ${DB_USER:-netbox}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-netbox}
+    volumes:
+      - netbox-postgres-data:/var/lib/postgresql/data
+    networks:
+      - netbox
+      
   netbox:
     image: docker.io/netboxcommunity/netbox:${VERSION-v3.7-2.8.0}
     container_name: app.netbox
@@ -16,40 +28,39 @@ services:
     depends_on:
       - redis
       - redis-cache
+      - db
     environment:
-      - CORS_ORIGIN_ALLOW_ALL=True
-      - DB_HOST=10.255.1.1
-      - DB_NAME=netbox_PRD
-      - DB_PASSWORD=3681fe9724072f9ede3b9d2d8bc674b2ab2eca825832c320460eec72d614a9a8
-      - DB_USER=netbox
-      - EMAIL_FROM=noreply@domain.local
-      - EMAIL_PASSWORD=-3681fe9724072f9ede3b9d2d8bc674b2ab2eca825832c320460eec72d614a9a8
-      - EMAIL_PORT=465
-      - EMAIL_SERVER=smtps.domain.local
-      - EMAIL_SSL_CERTFILE=
-      - EMAIL_SSL_KEYFILE=
-      - EMAIL_TIMEOUT=5
-      - EMAIL_USERNAME=apps@domain.local
-      - EMAIL_USE_SSL=false
-      - EMAIL_USE_TLS=true
-      - GRAPHQL_ENABLED=true
-      - HOUSEKEEPING_INTERVAL=86400
-      - MEDIA_ROOT=/opt/netbox/netbox/media
-      - METRICS_ENABLED=false
-      - REDIS_CACHE_DATABASE=1
-      - REDIS_CACHE_HOST=redis-cache
-      - REDIS_CACHE_INSECURE_SKIP_TLS_VERIFY=false
-      - REDIS_CACHE_PASSWORD=3681fe9724072f9ede3b9d2d8bc674b2ab2eca825832c320460eec72d614a9a8
-      - REDIS_CACHE_SSL=false
-      - REDIS_DATABASE=0
-      - REDIS_HOST=redis
-      - REDIS_INSECURE_SKIP_TLS_VERIFY=false
-      - REDIS_PASSWORD=3681fe9724072f9ede3b9d2d8bc674b2ab2eca825832c320460eec72d614a9a8
-      - REDIS_SSL=false
-      - RELEASE_CHECK_URL=https://api.github.com/repos/netbox-community/netbox/releases
-      - SECRET_KEY='3681fe9724072f9ede3b9d2d8bc674b2ab2eca825832c320460eec72d614a9a8'
-      - SKIP_SUPERUSER=true
-      - WEBHOOKS_ENABLED=true
+      CORS_ORIGIN_ALLOW_ALL: true
+      DB_HOST: ${DB_HOST:-netbox}
+      DB_NAME: ${DB_NAME:-netbox}
+      DB_PASSWORD: ${DB_PASSWORD:-netbox}
+      DB_USER: ${DB_USER:-netbox}
+      EMAIL_FROM: ${EMAIL_FROM:-netbox}
+      EMAIL_PASSWORD: ${EMAIL_PASSWORD:-netbox}
+      EMAIL_PORT: ${EMAIL_PORT:-netbox}
+      EMAIL_SERVER: ${EMAIL_SERVER:-netbox}
+      EMAIL_TIMEOUT: 5
+      EMAIL_USERNAME: ${EMAIL_USER:-netbox}
+      EMAIL_USE_SSL: ${EMAIL_USE_SSL:-true}
+      EMAIL_USE_TLS: ${EMAIL_USE_TLS:-false}
+      GRAPHQL_ENABLED: true
+      HOUSEKEEPING_INTERVAL: 86400
+      MEDIA_ROOT: /opt/netbox/netbox/media
+      METRICS_ENABLED: false
+      REDIS_CACHE_DATABASE: 1
+      REDIS_CACHE_HOST: redis-cache
+      REDIS_CACHE_INSECURE_SKIP_TLS_VERIFY: false
+      REDIS_CACHE_PASSWORD: ${REDIS_CACHE_PASSWORD:-netbox}
+      REDIS_CACHE_SSL: false
+      REDIS_DATABASE: 0
+      REDIS_HOST: redis
+      REDIS_INSECURE_SKIP_TLS_VERIFY;: false
+      REDIS_PASSWORD: ${REDIS_PASSWORD:-netbox}
+      REDIS_SSL: false
+      RELEASE_CHECK_URL: https://api.github.com/repos/netbox-community/netbox/releases
+      SECRET_KEY: ${SECRET_KEY:-netbox}
+      SKIP_SUPERUSER: true
+      WEBHOOKS_ENABLED: true
     user: 'unit:root'
     healthcheck:
       start_period: 60s
@@ -57,7 +68,7 @@ services:
       interval: 15s
       test: "curl -f http://localhost:8080/api/ || exit 1"
     volumes:
-      - /mnt/VOLUME-RPLXC01/docker/netbox/configuration:/etc/netbox/config:z,ro
+      - /opt/docker/netbox/config:/etc/netbox/config:z,ro
       - netbox-media-files:/opt/netbox/netbox/media:rw
       - netbox-reports-files:/opt/netbox/netbox/reports:rw
       - netbox-scripts-files:/opt/netbox/netbox/scripts:rw
@@ -72,40 +83,39 @@ services:
       - netbox
       - redis
       - redis-cache
+      - db
     environment:
-      - CORS_ORIGIN_ALLOW_ALL=True
-      - DB_HOST=10.255.1.1
-      - DB_NAME=netbox_PRD
-      - DB_PASSWORD=3681fe9724072f9ede3b9d2d8bc674b2ab2eca825832c320460eec72d614a9a8
-      - DB_USER=netbox
-      - EMAIL_FROM=noreply@domain.local
-      - EMAIL_PASSWORD=-3681fe9724072f9ede3b9d2d8bc674b2ab2eca825832c320460eec72d614a9a8
-      - EMAIL_PORT=465
-      - EMAIL_SERVER=smtps.domain.local
-      - EMAIL_SSL_CERTFILE=
-      - EMAIL_SSL_KEYFILE=
-      - EMAIL_TIMEOUT=5
-      - EMAIL_USERNAME=apps@domain.local
-      - EMAIL_USE_SSL=false
-      - EMAIL_USE_TLS=true
-      - GRAPHQL_ENABLED=true
-      - HOUSEKEEPING_INTERVAL=86400
-      - MEDIA_ROOT=/opt/netbox/netbox/media
-      - METRICS_ENABLED=false
-      - REDIS_CACHE_DATABASE=1
-      - REDIS_CACHE_HOST=redis-cache
-      - REDIS_CACHE_INSECURE_SKIP_TLS_VERIFY=false
-      - REDIS_CACHE_PASSWORD=3681fe9724072f9ede3b9d2d8bc674b2ab2eca825832c320460eec72d614a9a8
-      - REDIS_CACHE_SSL=false
-      - REDIS_DATABASE=0
-      - REDIS_HOST=redis
-      - REDIS_INSECURE_SKIP_TLS_VERIFY=false
-      - REDIS_PASSWORD=3681fe9724072f9ede3b9d2d8bc674b2ab2eca825832c320460eec72d614a9a8
-      - REDIS_SSL=false
-      - RELEASE_CHECK_URL=https://api.github.com/repos/netbox-community/netbox/releases
-      - SECRET_KEY='3681fe9724072f9ede3b9d2d8bc674b2ab2eca825832c320460eec72d614a9a8'
-      - SKIP_SUPERUSER=true
-      - WEBHOOKS_ENABLED=true
+      CORS_ORIGIN_ALLOW_ALL: true
+      DB_HOST: ${DB_HOST:-netbox}
+      DB_NAME: ${DB_NAME:-netbox}
+      DB_PASSWORD: ${DB_PASSWORD:-netbox}
+      DB_USER: ${DB_USER:-netbox}
+      EMAIL_FROM: ${EMAIL_FROM:-netbox}
+      EMAIL_PASSWORD: ${EMAIL_PASSWORD:-netbox}
+      EMAIL_PORT: ${EMAIL_PORT:-netbox}
+      EMAIL_SERVER: ${EMAIL_SERVER:-netbox}
+      EMAIL_TIMEOUT: 5
+      EMAIL_USERNAME: ${EMAIL_USER:-netbox}
+      EMAIL_USE_SSL: ${EMAIL_USE_SSL:-true}
+      EMAIL_USE_TLS: ${EMAIL_USE_TLS:-false}
+      GRAPHQL_ENABLED: true
+      HOUSEKEEPING_INTERVAL: 86400
+      MEDIA_ROOT: /opt/netbox/netbox/media
+      METRICS_ENABLED: false
+      REDIS_CACHE_DATABASE: 1
+      REDIS_CACHE_HOST: redis-cache
+      REDIS_CACHE_INSECURE_SKIP_TLS_VERIFY: false
+      REDIS_CACHE_PASSWORD: ${REDIS_CACHE_PASSWORD:-netbox}
+      REDIS_CACHE_SSL: false
+      REDIS_DATABASE: 0
+      REDIS_HOST: redis
+      REDIS_INSECURE_SKIP_TLS_VERIFY: false
+      REDIS_PASSWORD: ${REDIS_PASSWORD:-netbox}
+      REDIS_SSL: false
+      RELEASE_CHECK_URL: https://api.github.com/repos/netbox-community/netbox/releases
+      SECRET_KEY: ${SECRET_KEY:-netbox}
+      SKIP_SUPERUSER: true
+      WEBHOOKS_ENABLED: true
     command:
       - /opt/netbox/venv/bin/python
       - /opt/netbox/netbox/manage.py
@@ -116,7 +126,7 @@ services:
       interval: 15s
       test: "ps -aux | grep -v grep | grep -q rqworker || exit 1"
     volumes:
-      - /mnt/VOLUME-RPLXC01/docker/netbox/configuration:/etc/netbox/config:z,ro
+      - /opt/docker/netbox/config:/etc/netbox/config:z,ro
       - netbox-media-files:/opt/netbox/netbox/media:rw
       - netbox-reports-files:/opt/netbox/netbox/reports:rw
       - netbox-scripts-files:/opt/netbox/netbox/scripts:rw
@@ -130,40 +140,39 @@ services:
       - netbox
       - redis
       - redis-cache
+      - db
     environment:
-      - CORS_ORIGIN_ALLOW_ALL=True
-      - DB_HOST=10.255.1.1
-      - DB_NAME=netbox_PRD
-      - DB_PASSWORD=3681fe9724072f9ede3b9d2d8bc674b2ab2eca825832c320460eec72d614a9a8
-      - DB_USER=netbox
-      - EMAIL_FROM=noreply@domain.local
-      - EMAIL_PASSWORD=-3681fe9724072f9ede3b9d2d8bc674b2ab2eca825832c320460eec72d614a9a8
-      - EMAIL_PORT=465
-      - EMAIL_SERVER=smtps.domain.local
-      - EMAIL_SSL_CERTFILE=
-      - EMAIL_SSL_KEYFILE=
-      - EMAIL_TIMEOUT=5
-      - EMAIL_USERNAME=apps@domain.local
-      - EMAIL_USE_SSL=false
-      - EMAIL_USE_TLS=true
-      - GRAPHQL_ENABLED=true
-      - HOUSEKEEPING_INTERVAL=86400
-      - MEDIA_ROOT=/opt/netbox/netbox/media
-      - METRICS_ENABLED=false
-      - REDIS_CACHE_DATABASE=1
-      - REDIS_CACHE_HOST=redis-cache
-      - REDIS_CACHE_INSECURE_SKIP_TLS_VERIFY=false
-      - REDIS_CACHE_PASSWORD=3681fe9724072f9ede3b9d2d8bc674b2ab2eca825832c320460eec72d614a9a8
-      - REDIS_CACHE_SSL=false
-      - REDIS_DATABASE=0
-      - REDIS_HOST=redis
-      - REDIS_INSECURE_SKIP_TLS_VERIFY=false
-      - REDIS_PASSWORD=3681fe9724072f9ede3b9d2d8bc674b2ab2eca825832c320460eec72d614a9a8
-      - REDIS_SSL=false
-      - RELEASE_CHECK_URL=https://api.github.com/repos/netbox-community/netbox/releases
-      - SECRET_KEY='3681fe9724072f9ede3b9d2d8bc674b2ab2eca825832c320460eec72d614a9a8'
-      - SKIP_SUPERUSER=true
-      - WEBHOOKS_ENABLED=true
+      CORS_ORIGIN_ALLOW_ALL: true
+      DB_HOST: ${DB_HOST:-netbox}
+      DB_NAME: ${DB_NAME:-netbox}
+      DB_PASSWORD: ${DB_PASSWORD:-netbox}
+      DB_USER: ${DB_USER:-netbox}
+      EMAIL_FROM: ${EMAIL_FROM:-netbox}
+      EMAIL_PASSWORD: ${EMAIL_PASSWORD:-netbox}
+      EMAIL_PORT: ${EMAIL_PORT:-netbox}
+      EMAIL_SERVER: ${EMAIL_SERVER:-netbox}
+      EMAIL_TIMEOUT: 5
+      EMAIL_USERNAME: ${EMAIL_USER:-netbox}
+      EMAIL_USE_SSL: ${EMAIL_USE_SSL:-true}
+      EMAIL_USE_TLS: ${EMAIL_USE_TLS:-false}
+      GRAPHQL_ENABLED: true
+      HOUSEKEEPING_INTERVAL: 86400
+      MEDIA_ROOT: /opt/netbox/netbox/media
+      METRICS_ENABLED: false
+      REDIS_CACHE_DATABASE: 1
+      REDIS_CACHE_HOST: redis-cache
+      REDIS_CACHE_INSECURE_SKIP_TLS_VERIFY: false
+      REDIS_CACHE_PASSWORD: ${REDIS_CACHE_PASSWORD:-netbox}
+      REDIS_CACHE_SSL: false
+      REDIS_DATABASE: 0
+      REDIS_HOST: redis
+      REDIS_INSECURE_SKIP_TLS_VERIFY: false
+      REDIS_PASSWORD: ${REDIS_PASSWORD:-netbox}
+      REDIS_SSL: false
+      RELEASE_CHECK_URL: https://api.github.com/repos/netbox-community/netbox/releases
+      SECRET_KEY: ${SECRET_KEY:-netbox}
+      SKIP_SUPERUSER: true
+      WEBHOOKS_ENABLED: true
     command:
       - /opt/netbox/housekeeping.sh
     healthcheck:
@@ -182,7 +191,7 @@ services:
       - -c
       - redis-server --appendonly yes --requirepass $$REDIS_PASSWORD
     environment:
-      - REDIS_PASSWORD=3681fe9724072f9ede3b9d2d8bc674b2ab2eca825832c320460eec72d614a9a8
+      REDIS_PASSWORD: ${REDIS_PASSWORD:-netbox}
     volumes:
       - netbox-redis-data:/data
     networks:
@@ -196,7 +205,7 @@ services:
       - -c
       - redis-server --requirepass $$REDIS_PASSWORD
     environment:
-      - REDIS_PASSWORD=3681fe9724072f9ede3b9d2d8bc674b2ab2eca825832c320460eec72d614a9a8
+      REDIS_PASSWORD: ${REDIS_PASSWORD:-netbox}
     volumes:
       - netbox-redis-cache-data:/data
     networks:
